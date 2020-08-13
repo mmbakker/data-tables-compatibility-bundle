@@ -1,5 +1,7 @@
 services:
   Apipa169\DataTablesCompatibilityBundle\Handler\DataTablesCompatibilityHandler:
     tags:
-      - { name: kernel.event_listener, event: kernel.response }
       - { name: kernel.event_listener, event: kernel.request }
+  Apipa169\DataTablesCompatibilityBundle\Handler\DataTablesDrawHandler:
+    tags:
+      - { name: kernel.event_listener, event: kernel.response }
