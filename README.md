@@ -1,0 +1,1 @@
+Symfony bundle to add basic support for DataTables
