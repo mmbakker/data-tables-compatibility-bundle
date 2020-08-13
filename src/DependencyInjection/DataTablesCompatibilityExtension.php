@@ -13,5 +13,9 @@ class DataTablesCompatibilityExtension extends Extension
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/config'));
         $loader->load('services.yml');
+
+        $configuration = new Configuration();
+        $config = $this->processConfiguration($configuration, $configs);
+        $container->setParameter('data_tables_compatibility_config', $config);
     }
 }

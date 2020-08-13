@@ -2,26 +2,23 @@
 
 namespace Apipa169\DataTablesCompatibilityBundle\Handler;
 
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class DataTablesCompatibilityHandler
 {
+    private $container;
+
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
     // DataTables sends information about search and sort actions from the user. This is mapped here to a format we want to use.
     public function onKernelRequest(RequestEvent $event)
     {
-        // Array of names to be replaced, needs to be in yaml file for example to make re-use easier as this is service specific
-        $nameReplace = [
-            // 'name_in_datatables' => 'new_name'
-            '_id' => 'id',
-            'management' => 'management_ip',
-            'equipment' => 'device_type_name',
-            'equipment_id' => 'device_type_id',
-            'manufacturer' => 'vendor_name',
-        ];
-
         $request = $event->getRequest();
+        $config = $this->container->getParameter('data_tables_compatibility_config');
 
         // Only if Draw and columns is provided in the request and the method is GET, so we are sure it is a DataTables request
         if($request->get('draw') && $request->get('columns') && $request->getMethod() === 'GET') {
@@ -29,10 +26,11 @@ class DataTablesCompatibilityHandler
             $order = $request->get('order');
             $search = $request->get('search');
 
-            // map names of fields in "data"
+            // map the property names based on the configfile config/packages/data_tables_compatibility.yaml
+            $mappings = $config['mapping'];
             for ($i = 0; $i < count($columns); $i++) {
-                if (isset($nameReplace[$columns[$i]['data']])) {
-                    $columns[$i]["data"] = $nameReplace[$columns[$i]['data']];
+                foreach ($mappings as $mapping) {
+                    $columns[$i]['data'] = preg_replace('~' . $mapping['from'] . '~', $mapping['to'], $columns[$i]['data']);
                 }
             }
 
