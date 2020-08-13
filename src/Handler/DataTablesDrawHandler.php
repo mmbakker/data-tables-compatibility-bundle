@@ -1,6 +1,6 @@
 <?php
 
-namespace Apipa169\DataTablesCompatibility\Handler;
+namespace Apipa169\DataTablesCompatibilityBundle\Handler;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
